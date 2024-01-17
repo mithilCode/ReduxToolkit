@@ -1,0 +1,11 @@
+npm react toolkit npm redux-saga wrapping a App component in store like App
+
+
+import { Provider } from 'react-redux';
+import { configureAppStore } from 'redux/configureStore';
+const store = configureAppStore();
+<Provider store="{store}">
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+</Provider>
