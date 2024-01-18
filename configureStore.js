@@ -1,30 +1,34 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createInjectorsEnhancer } from 'redux-injectors';
 import createSagaMiddleware from 'redux-saga';
-import { createReducer } from './reducers';
+import createReducer from './reducers';
 
 export function configureAppStore() {
-  const reduxSagaMonitorOptions = {};
-  const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
-  const { run: runSaga } = sagaMiddleware;
+    const reduxSagaMonitorOptions = {};
+    const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
+    const { run: runSaga } = sagaMiddleware;
 
-  const middlewares = [sagaMiddleware];
+    const middlewares = [sagaMiddleware];
 
-  const enhancers = [
-    createInjectorsEnhancer({
-      createReducer,
-      runSaga,
-    }),
-  ];
+    const enhancers = (getDefaultEnhancers) => [
+        ...(getDefaultEnhancers ? getDefaultEnhancers() : []),
+        createInjectorsEnhancer({
+            createReducer,
+            runSaga,
+        }),
+    ];
 
-  const store = configureStore({
-    reducer: createReducer(),
-    middleware: defaultMiddleware => [...defaultMiddleware(), ...middlewares],
-    devTools:
-      process.env.NODE_ENV !== 'production' ||
-      process.env.PUBLIC_URL.length > 0,
-    enhancers,
-  });
+    const store = configureStore({
+        reducer: createReducer(),
+        middleware: (getDefaultMiddleware) => [
+            ...getDefaultMiddleware({ thunk: false }), // Ensure thunk is disabled if you're not using it
+            ...middlewares,
+        ],
+        devTools: {
+            shouldHotReload: false,
+        },
+        enhancers,
+    });
 
-  return store;
+    return store;
 }
