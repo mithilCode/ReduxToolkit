@@ -1,5 +1,5 @@
 npm react toolkit npm redux-saga wrapping a App component in store like App
-
+npm i redux-injectors
 
 import { Provider } from 'react-redux';
 import { configureAppStore } from 'redux/configureStore';
